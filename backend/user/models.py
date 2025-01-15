@@ -9,4 +9,4 @@ class User(AbstractUser):
     followers = models.ManyToManyField('self',symmetrical = False, related_name = "following", blank = True)
 
     def __str__(self):
-        return self.username
+        return f"{self.username} : {self.bio}"
