@@ -19,3 +19,22 @@ def register_user(request):
         serializer.save()
         return Response({"message":"user_registered succesfully"},status = status.HTTP_201_CREATED)
     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login_user(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+    try:
+        user = User.objects.get(username)
+        if user.check_password(password):
+            refresh = RefreshToken.for_user(user)
+            return Response({'access_token':str(refresh.access_token),'refresh_token':str(refresh)})
+
+        else:
+            return Response({'error':'invalid credentials'},status=status.HTTP_401_UNAUTHORIZED)
+    except User.DoesNotExist:
+        return Response({'error':'invalid credentials'},status=status.HTTP_401_UNAUTHORIZED)
+
+
