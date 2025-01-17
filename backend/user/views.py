@@ -38,3 +38,14 @@ def login_user(request):
         return Response({'error':'invalid credentials'},status=status.HTTP_401_UNAUTHORIZED)
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout_user(request):
+    try:
+        token = request.data.get('refresh_token')
+        token.blacklist()
+        return Response({"message":"User logged out successfuly"},status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error":"Invalid token"},status=status.HTTP_400_BAD_REQUEST)
+
+
