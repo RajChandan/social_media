@@ -9,6 +9,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer, RegisterSerializer
 from django.contrib.auth import get_user_model
 
+# {"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM3MjA5ODkzLCJpYXQiOjE3MzcyMDk1OTMsImp0aSI6IjFkYTA1M2E4NmQwNTQxNDE4YmQ1MzdmZGI0NzdhN2IzIiwidXNlcl9pZCI6Mn0.9xQnILOsZAG6QwL2RGJ8phYfOzZsQiBntA5ytip-oWw","refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczNzI5NTk5MywiaWF0IjoxNzM3MjA5NTkzLCJqdGkiOiI5YTAxYmI2Yzk3MzI0YmU4YTQwNDM0ZWNiNTEyNjgzNCIsInVzZXJfaWQiOjJ9.U94iyOlKTfF9Zd2xSkMayGPAGBSqvmwvWjMDMKArZMI"}
+
 User = get_user_model()
 
 
@@ -30,7 +32,7 @@ def login_user(request):
     username = request.data.get("username")
     password = request.data.get("password")
     try:
-        user = User.objects.get(username)
+        user = User.objects.get(username=username)
         if user.check_password(password):
             refresh = RefreshToken.for_user(user)
             return Response(
@@ -76,7 +78,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def profile(self, request):
-        user = request.user()
+        user = request.user
         serializer = self.get_serializer(user)
         return Response(serializer.data)
 

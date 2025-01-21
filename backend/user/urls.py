@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import register_user, login_user, logout_user, UserViewSet
 
 router = DefaultRouter()
-router.register(r"user", UserViewSet, basename="user")
+router.register(r"", UserViewSet, basename="user")
 
 urlpatterns = [
     path("register/", register_user, name="register_user"),
