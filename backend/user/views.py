@@ -94,7 +94,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
-    def follow(self, request):
+    def follow(self, request, pk=None):
         user_to_follow = self.get_object()
         user = request.user
         if user_to_follow == user:
