@@ -10,7 +10,17 @@ class Post(models.Model):
     )
     content = models.TextField()
     image = models.ImageField(upload_to="post_image/", blank=True, null=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL,related_name="liked_posts",blank=True)
+
+    class Meta:
+        db_table = "post"
 
     def __str__(self):
-        return f"{self.author.username} -  {self.content}"
+        return f"{self.author.username} -  {self.content} - {self.like_count}"
+
+    @property
+    def like_count(self):
+        return self.likes.count()
+
+

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_swagger",
     "user",
+    "post",
     "drf_yasg",
 ]
 
