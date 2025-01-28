@@ -14,3 +14,24 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self,serializer):
         serializer.save(author=self.request.user)
+
+    @action(detail=True, methods=['post'])
+    def like(self, request, pk=None):
+        post = self.get_object()
+        user = request.user
+        if user in post.likes.all():
+            post.likes.remove(user)
+            return Response({"message": "Post unliked"}, status=status.HTTP_200_OK)
+        else:
+            post.likes.add(user)
+            return Response({"message": "Post liked"}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def comment(self, request, pk=None):
+        post = self.get_object()
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(author=request.user, post=post)
+            comments = CommentSerializer(post.comments.all(), many=True).data
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
