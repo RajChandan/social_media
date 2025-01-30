@@ -41,9 +41,11 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework",
     "rest_framework_swagger",
+    "django_elasticsearch_dsl",
     "user",
     "post",
     "drf_yasg",
+    "search"
 ]
 
 MIDDLEWARE = [
@@ -151,3 +153,9 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'http://localhost:9200'
+    },
+}
