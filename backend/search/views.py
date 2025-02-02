@@ -8,7 +8,7 @@ class SearchView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self,request):
-        query = requests.GET.get("q","").strip()
+        query = request.GET.get("q","").strip()
         if not query:
             return Response({"error":"no query to search"})
 
