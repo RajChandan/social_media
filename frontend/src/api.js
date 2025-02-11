@@ -5,7 +5,10 @@ const API_URL = "http://127.0.0.1:8000";
 export const registerUser = async (userdata) => {
     try
     {
-        const response = await axios.post(`${API_URL}/user/register/`,userdata);
+        const response = await axios.post(`${API_URL}/user/register/`,JSON.stringify(userdata),
+        {
+            headers : {"Content-Type":"application/json"}
+        });
         return response.data;
 
     }
