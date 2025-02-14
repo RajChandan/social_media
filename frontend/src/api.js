@@ -30,3 +30,17 @@ export const loginUser = async (credentials) => {
 
 
 };
+
+
+export const getUserProfile = async (token) => {
+    try {
+        const response = await axios.get(`${API_URL}/user/profile/`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    }
+    catch (error) {
+        console.log("Profile fetch error : ", error);
+        throw error.response.data;
+    }
+}
