@@ -17,7 +17,9 @@ User = get_user_model()
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def register_user(request):
+    print(request.data," ======== request data")
     serializer = RegisterSerializer(data=request.data)
+    print(serializer," serializer")
     if serializer.is_valid():
         serializer.save()
         return Response(
@@ -79,7 +81,8 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def profile(self, request):
         user = request.user
-        serializer = self.get_serializer(user)
+        serializer = self.get_serializer(user,context = {"request":request})
+        print(serializer.data,' ========== data')
         return Response(serializer.data)
 
     @action(detail=False, methods=["patch"], permission_classes=[IsAuthenticated])

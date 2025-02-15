@@ -21,6 +21,11 @@ class UserSerializer(serializers.ModelSerializer):
     def get_following_count(self, obj):
         return obj.following.count()
 
+    def get_profile_picture(self,obj):
+        request = self.context.get("request")
+        if obj.profile_picture:
+            return request.build_absolute_url(obj.profile_picture.url)
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
