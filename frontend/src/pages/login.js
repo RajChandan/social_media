@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
     const [credentials, setCredentials] = useState({ username: "", password: "" });
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -16,6 +17,7 @@ const Login = () => {
         try {
             const data = await loginUser(credentials);
             localStorage.setItem("token", data.access_token);
+            navigate("/profile");
         }
         catch (error) {
             setError(error.message || "Invalid username or password");
