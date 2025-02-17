@@ -13,6 +13,8 @@ import  os
 from pathlib import Path
 from datetime import timedelta
 
+from django.conf.global_settings import AUTHENTICATION_BACKENDS
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,7 +41,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.github",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
     "rest_framework",
+    "rest_framework.authtoken",
     "corsheaders",
     "rest_framework_swagger",
     "django_elasticsearch_dsl",
@@ -48,6 +57,25 @@ INSTALLED_APPS = [
     "drf_yasg",
     "search"
 ]
+
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend","allauth.account.auth_backends.AuthenticationBackend",)
+
+LOGIN_REDIRECT_URL = "http://localhost:3000/profile"
+LOGOUT_REDIRECT_URL = "http://localhost:3000/"
+
+SOCIALACCOUNT_PROVIDERS = {
+    "github" : {
+        "SCOPE" : ["user"],
+        "AUTH_PARAMS" : {"access_type" : "online"},
+        "OAUTH_PKCE_ENABLED" : True
+    }
+}
+
+# GitHub OAuth Credentials
+SOCIAL_AUTH_GITHUB_KEY = "your_github_client_id"
+SOCIAL_AUTH_GITHUB_SECRET = "your_github_client_secret"
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -58,6 +86,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware"
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -97,6 +126,7 @@ DATABASES = {
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
+"rest_framework.authentication.TokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
