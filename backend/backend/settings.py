@@ -74,8 +74,8 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 # GitHub OAuth Credentials
-SOCIAL_AUTH_GITHUB_KEY = "your_github_client_id"
-SOCIAL_AUTH_GITHUB_SECRET = "your_github_client_secret"
+SOCIAL_AUTH_GITHUB_KEY = "Ov23lim6pm47pVRw9BwR"
+SOCIAL_AUTH_GITHUB_SECRET = "86a796ad763b76366c23d98f99b7df54e7abe1ca"
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
