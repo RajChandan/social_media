@@ -24,8 +24,8 @@ class UserSerializer(serializers.ModelSerializer):
     def get_profile_picture(self,obj):
         request = self.context.get("request")
         if obj.profile_picture:
-            return request.build_absolute_url(obj.profile_picture.url)
-
+            return request.build_absolute_uri(obj.profile_picture.url)
+        return "https://avatar.iran.liara.run/public/boy"
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
