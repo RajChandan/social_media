@@ -1,6 +1,10 @@
 from django.shortcuts import render
 
 # Create your views here.
+from django.conf import settings
+import requests
+from django.conf import settings
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework.response import Response
@@ -9,17 +13,29 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer, RegisterSerializer
 from django.contrib.auth import get_user_model
 
-# {"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM3MjA5ODkzLCJpYXQiOjE3MzcyMDk1OTMsImp0aSI6IjFkYTA1M2E4NmQwNTQxNDE4YmQ1MzdmZGI0NzdhN2IzIiwidXNlcl9pZCI6Mn0.9xQnILOsZAG6QwL2RGJ8phYfOzZsQiBntA5ytip-oWw","refresh_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczNzI5NTk5MywiaWF0IjoxNzM3MjA5NTkzLCJqdGkiOiI5YTAxYmI2Yzk3MzI0YmU4YTQwNDM0ZWNiNTEyNjgzNCIsInVzZXJfaWQiOjJ9.U94iyOlKTfF9Zd2xSkMayGPAGBSqvmwvWjMDMKArZMI"}
 
 User = get_user_model()
+
+
+@api_view["POST"]
+@permission_classes([AllowAny])
+def github_login(request):
+    code = request.data.get("code")
+    if not code:
+        return Response(
+            {"error": "Github Authorization code is required"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    github_token_url = "https://github.com/login/oauth/access_token"
 
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def register_user(request):
-    print(request.data," ======== request data")
+    print(request.data, " ======== request data")
     serializer = RegisterSerializer(data=request.data)
-    print(serializer," serializer")
+    print(serializer, " serializer")
     if serializer.is_valid():
         serializer.save()
         return Response(
@@ -81,8 +97,8 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def profile(self, request):
         user = request.user
-        serializer = self.get_serializer(user,context = {"request":request})
-        print(serializer.data,' ========== data')
+        serializer = self.get_serializer(user, context={"request": request})
+        print(serializer.data, " ========== data")
         return Response(serializer.data)
 
     @action(detail=False, methods=["patch"], permission_classes=[IsAuthenticated])
