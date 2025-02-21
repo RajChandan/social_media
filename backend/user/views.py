@@ -1,5 +1,3 @@
-from django.shortcuts import render
-
 # Create your views here.
 from django.conf import settings
 import requests
@@ -17,7 +15,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-@api_view["POST"]
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def github_login(request):
     code = request.data.get("code")
@@ -28,6 +26,72 @@ def github_login(request):
         )
 
     github_token_url = "https://github.com/login/oauth/access_token"
+    client_id = settings.SOCIAL_AUTH_GITHUB_KEY
+    client_secret = settings.SOCIAL_AUTH_GITHUB_SECRET
+    redirect_url = "http://127.0.0.1:3000/github/callback"
+
+    token_response = requests.post(
+        github_token_url,
+        headers={"Accept": "application/json"},
+        data={
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "code": code,
+            "redirect_url": redirect_url,
+        },
+    )
+    token_data = token_response.json()
+    access_token = token_data.get("access_token")
+
+    if not access_token:
+        return Response(
+            {"error": "Invalid GitHub Authorization"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    github_user_url = "https://api.github.com/user"
+    github_email_url = "https://api.github.com/user/emails"
+
+    user_response = requests.get(
+        github_user_url, headers={"Authorization": f"token {access_token}"}
+    )
+    user_data = user_response.json()
+
+    email_response = requests.get(
+        github_email_url, headers={"Authorization": f"token {access_token}"}
+    )
+
+    email_data = email_response.json()
+
+    if not user_data.get("id"):
+        return Response(
+            {"error": "Failed to retrieve github user details"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    github_id = user_data.get("id")
+    username = user_data.get("login")
+    email = email_data[0]["email"] if email_data else f"{username}@github.com"
+    profile_picture = user_data.get("avatar_url")
+
+    user, created = User.objects.get_or_create(
+        github_id=github_id,
+        defaults={
+            "username": username,
+            "email": email,
+            "profile_picture": profile_picture,
+        },
+    )
+
+    refresh = RefreshToken.for_user(user)
+    return Response(
+        {
+            "access_token": str(refresh.access_token),
+            "refresh_token": str(refresh),
+            "user": UserSerializer(user).data,
+            "message": "user created" if created else "user logged in",
+        }
+    )
 
 
 @api_view(["POST"])
