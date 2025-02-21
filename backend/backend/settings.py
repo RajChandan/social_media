@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-import  os
+
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -55,27 +56,31 @@ INSTALLED_APPS = [
     "user",
     "post",
     "drf_yasg",
-    "search"
+    "search",
 ]
 
 SITE_ID = 1
 
-AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend","allauth.account.auth_backends.AuthenticationBackend",)
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
 
 LOGIN_REDIRECT_URL = "http://localhost:3000/profile"
 LOGOUT_REDIRECT_URL = "http://localhost:3000/"
 
 SOCIALACCOUNT_PROVIDERS = {
-    "github" : {
-        "SCOPE" : ["user"],
-        "AUTH_PARAMS" : {"access_type" : "online"},
-        "OAUTH_PKCE_ENABLED" : True
+    "github": {
+        "SCOPE": ["user"],
+        "AUTH_PARAMS": {"access_type": "online"},
+        "OAUTH_PKCE_ENABLED": True,
     }
 }
 
 # GitHub OAuth Credentials
-SOCIAL_AUTH_GITHUB_KEY = "Ov23lim6pm47pVRw9BwR"
-SOCIAL_AUTH_GITHUB_SECRET = "86a796ad763b76366c23d98f99b7df54e7abe1ca"
+GITHUB_CLIENT_ID = "Ov23lim6pm47pVRw9BwR"
+GITHUB_CLIENT_SECRET = "86a796ad763b76366c23d98f99b7df54e7abe1ca"
+GITHUB_REDIRECT_URI = "http://127.0.0.1:8000/user/github/callback/"
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -86,7 +91,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "allauth.account.middleware.AccountMiddleware"
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -126,7 +131,7 @@ DATABASES = {
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-"rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
@@ -191,9 +196,7 @@ STATIC_URL = "/static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ELASTICSEARCH_DSL = {
-    'default': {
-        'hosts': 'http://localhost:9200'
-    },
+    "default": {"hosts": "http://localhost:9200"},
 }
 
 MEDIA_URL = "/media/"

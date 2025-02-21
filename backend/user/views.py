@@ -15,10 +15,17 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-@api_view(["POST"])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def github_login(request):
-    code = request.data.get("code")
+    github_auth_url = f"https://github.com/login/oauth/authorize?client_id={settings.GITHUB_CLIENT_ID}&scope=user:email"
+    return Response({"url": github_auth_url})
+
+
+@api_view(["GET", "POST"])
+@permission_classes([AllowAny])
+def github_callback(request):
+    code = request.GET.get("code")
     if not code:
         return Response(
             {"error": "Github Authorization code is required"},
@@ -26,8 +33,8 @@ def github_login(request):
         )
 
     github_token_url = "https://github.com/login/oauth/access_token"
-    client_id = settings.SOCIAL_AUTH_GITHUB_KEY
-    client_secret = settings.SOCIAL_AUTH_GITHUB_SECRET
+    client_id = settings.GITHUB_CLIENT_ID
+    client_secret = settings.GITHUB_CLIENT_SECRET
     redirect_url = "http://127.0.0.1:3000/github/callback"
 
     token_response = requests.post(
@@ -37,10 +44,11 @@ def github_login(request):
             "client_id": client_id,
             "client_secret": client_secret,
             "code": code,
-            "redirect_url": redirect_url,
         },
     )
+    print("token response ::: ", token_response)
     token_data = token_response.json()
+    print(token_data, " ========= token data")
     access_token = token_data.get("access_token")
 
     if not access_token:
@@ -114,13 +122,14 @@ def login_user(request):
     username = request.data.get("username")
     password = request.data.get("password")
     try:
-        user = User.objects.get(username=username)
-        if user.check_password(password):
+        user = User.objects.filter(username=username).first()
+        if user and user.check_password(password):
             refresh = RefreshToken.for_user(user)
             return Response(
                 {
                     "access_token": str(refresh.access_token),
                     "refresh_token": str(refresh),
+                    "user": UserSerializer(user).data,
                 }
             )
 
