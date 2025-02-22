@@ -12,6 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     following_count = serializers.SerializerMethodField()
     followers = serializers.StringRelatedField(many=True)
     following = serializers.StringRelatedField(many=True)
+    profile_picture = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -34,9 +35,15 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.following.count()
 
     def get_profile_picture(self, obj):
-        request = self.context.get("request")
         if obj.profile_picture:
+            profile_picture_url = str(obj.profile_picture)
+
+            if profile_picture_url.startswith("http"):
+                return profile_picture_url
+
+            request = self.context.get("request")
             return request.build_absolute_uri(obj.profile_picture.url)
+
         return "https://avatar.iran.liara.run/public/boy"
 
 

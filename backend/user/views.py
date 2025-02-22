@@ -35,7 +35,7 @@ def github_callback(request):
     github_token_url = "https://github.com/login/oauth/access_token"
     client_id = settings.GITHUB_CLIENT_ID
     client_secret = settings.GITHUB_CLIENT_SECRET
-    redirect_url = "http://127.0.0.1:3000/github/callback"
+    redirect_url = "http://127.0.0.1:8000/user/github/callback/"
 
     token_response = requests.post(
         github_token_url,
@@ -44,6 +44,7 @@ def github_callback(request):
             "client_id": client_id,
             "client_secret": client_secret,
             "code": code,
+            "redirect_uri": redirect_url,
         },
     )
     print("token response ::: ", token_response)
@@ -87,9 +88,12 @@ def github_callback(request):
         defaults={
             "username": username,
             "email": email,
-            "profile_picture": profile_picture,
         },
     )
+
+    if created or user.profile_picture != profile_picture:
+        user.profile_picture = profile_picture
+        user.save(update_fields=["profile_picture"])
 
     refresh = RefreshToken.for_user(user)
     return Response(
