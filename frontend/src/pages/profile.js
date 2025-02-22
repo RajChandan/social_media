@@ -19,8 +19,10 @@ const Profile = () => {
             }
 
             try {
-                const data = getUserProfile(token);
+                const data = await getUserProfile(token);
+                console.log(data, '======data');
                 setUser(data);
+                console.log(user, " === user");
             }
             catch (error) {
                 setError("Failed to fetch profile, please login again");
@@ -57,9 +59,13 @@ const Profile = () => {
     return (<div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-6 rounded-lg shadow-md w-96">
             <h2 className="text-2xl font-bold text-center mb-4">Profile</h2>
-            <img src={user.profile_picture || "https://via.placeholder.com/150"}
+            <img src={user.profile_picture || "http://placekitten.com/250/250"}
                 alt="profile picture"
                 className="w-32 h-32 rounded-full mx-auto mb-4" />
+            <p className="text-center text-gray-700">
+                <strong>Username : </strong> {user.username}
+            </p>
+            <p className="text-center text-gray-700">{user.bio}</p>
         </div>
 
     </div>);

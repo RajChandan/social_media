@@ -24,6 +24,11 @@ const Login = () => {
         }
     };
 
+    const handleGithubLogin = () => {
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23lim6pm47pVRw9BwR&redirect_uri=http://127.0.0.1:8000/user/github/callback/
+`;
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-96">
@@ -33,6 +38,8 @@ const Login = () => {
                 <input type="text" name="username" placeholder="Username" className="w-full p-2 mb-2 border rounded" onChange={handleChange} required />
                 <input type="password" name="password" placeholder="Password" className="w-full p-2 mb-2 border rounded" onChange={handleChange} required />
                 <button type="submit" className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">Login</button>
+
+                <button type="button" onClick={handleGithubLogin} className="w-full bg-black text-white p-2 rounded mt-4 hover:bg-gray-800">Login with Github</button>
             </form>
         </div>);
 }

@@ -32,6 +32,19 @@ export const loginUser = async (credentials) => {
 };
 
 
+export const githubLogin = async (code) => {
+    try {
+        const response = await axios.get(`${API_URL}/user/github/login/?code=${code}`);
+        return response.data;
+    }
+
+    catch (error) {
+        console.log("Github login error : ", error);
+        throw error.response?.data || { error: "Github login failed" };
+    }
+};
+
+
 export const getUserProfile = async (token) => {
     try {
         const response = await axios.get(`${API_URL}/user/profile/`, {
