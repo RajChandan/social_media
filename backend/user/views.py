@@ -2,6 +2,7 @@
 from django.conf import settings
 import requests
 from django.conf import settings
+from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, action, permission_classes
@@ -96,6 +97,10 @@ def github_callback(request):
         user.save(update_fields=["profile_picture"])
 
     refresh = RefreshToken.for_user(user)
+    frontend_redirect_url = f"http://127.0.0.1:3000/github/callback?access_token={refresh.access_token}&refresh_token={refresh}"
+    print(frontend_redirect_url, " --- frontend")
+    return redirect(frontend_redirect_url)
+    """
     return Response(
         {
             "access_token": str(refresh.access_token),
@@ -104,6 +109,7 @@ def github_callback(request):
             "message": "user created" if created else "user logged in",
         }
     )
+    """
 
 
 @api_view(["POST"])
